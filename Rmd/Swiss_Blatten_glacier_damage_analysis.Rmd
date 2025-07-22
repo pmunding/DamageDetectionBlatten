@@ -1,0 +1,212 @@
+---
+title: "Damage Detection, Blatten glacier collapse"
+author: "Ousama Bin Zamir, Hassam Ali, Philipp Mundinger"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = TRUE,
+  message = TRUE)
+```
+
+### Data
+
+The data has been taken from the official portal **Federal Office of the Topography swisstopo Rapid Mapping**. <https://www.rapidmapping.admin.ch/index_de.html>.
+
+##### Resolution:
+
+```         
+  Spatial: 10 cm 
+  Spectral: 3 bands, RGB
+```
+
+##### Date:
+
+```         
+  Pre - event Data : 19th of May, 2025 
+  Event: 28th of May, 2025
+  Post - event Data : 30th of May, 2025
+```
+
+### Area of Interest:
+
+A small region of the whole area, where the houses have been damaged.
+
+```{r echo=FALSE, warning=FALSE, message = TRUE}
+# major library
+library(raster)
+library(terra)
+library(ggplot2)
+library(gridExtra)
+
+library(glcm)
+```
+
+
+```{r AOI}
+pre_img <- rast("AOI//19_5_AOI.tif")
+post_img <- rast("AOI//30_5_AOI.tif")
+
+par(mfrow = c(1, 2), 
+    oma = c(0, 1, 0, 1)) 
+plotRGB(pre_img, axes=FALSE, frame=TRUE)
+plotRGB(post_img, axes=FALSE, frame=TRUE)
+```
+
+### Applying spatial filters
+
+##### Laplacian Filter 3 on band 1:
+
+```{r lap_3 band_1}
+l_kernel <- matrix(c(0,-1,0,
+                     -1,3,-1,
+                     0,-1,0),
+                   nrow = 3, byrow = T)
+
+laplacian_pre_ch_1  <- focal(x = pre_img[[1]], w = l_kernel, fun=sum,  na.policy = "omit", fillvalue = 0)
+laplacian_post_ch_1 <- focal(x = post_img[[1]], w = l_kernel, fun=sum,  na.policy = "omit", fillvalue = 0)
+
+
+
+par(mfrow = c(1, 2),      
+    oma = c(1, 1, 1, 1)) 
+
+
+plot(x=laplacian_pre_ch_1 , col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+plot(x=laplacian_post_ch_1, col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+```
+
+##### Laplacian Filter 3 on band 3:
+
+```{r lap_3 band_3}
+laplacian_pre_ch_3  <- focal(x = pre_img[[3]], w = l_kernel, fun=sum,  na.policy = "omit", fillvalue = 0)
+laplacian_post_ch_3 <- focal(x = post_img[[3]], w = l_kernel, fun=sum,  na.policy = "omit", fillvalue = 0)
+
+
+
+par(mfrow = c(1, 2),      
+    oma = c(1, 1, 1, 1)) 
+
+
+plot(x=laplacian_pre_ch_3 , col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+plot(x=laplacian_post_ch_3, col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+```
+
+##### GLCM texture analysis
+
+```{r GLCM}
+pre_img_raster <- raster(pre_img[[1]])
+post_img_raster <- raster(post_img[[1]])
+
+window_size <- c(21, 21)
+# all direction
+shifts <- list(c(0,1), c(1,0), c(1,1), c(1,-1))
+
+pre_glcm_feature <- glcm(
+  x = pre_img_raster,
+  window = window_size,
+  shift = shifts,
+  statistics = "dissimilarity"
+)
+
+post_glcm_feature <- glcm(
+  x = post_img_raster,
+  window = window_size,
+  shift = shifts,
+  statistics = "dissimilarity"
+)
+```
+
+```{r warning=FALSE}
+rm(pre_img_raster)
+rm(post_img_raster)
+# viewing
+par(mfrow = c(1, 2),      
+    oma = c(1, 1, 1, 1)) 
+plot(x=pre_glcm_feature , col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+plot(x=post_glcm_feature, col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+```
+
+### Stacking Images
+
+```{r Stacking}
+
+# the glcm layers are in raster, 
+# converting into spatraster
+
+pre_glcm <- rast(pre_glcm_feature)
+post_glcm <- rast(post_glcm_feature)
+
+
+pre_6_band <- c(pre_img, laplacian_pre_ch_1, laplacian_pre_ch_3, pre_glcm)
+post_6_band <- c(post_img, laplacian_post_ch_1, laplacian_post_ch_3, post_glcm)
+
+rm(pre_glcm)
+rm(post_glcm)
+
+# viewing
+par(mfrow = c(1, 2),      
+    oma = c(1, 1, 1, 1)) 
+plot(x=pre_6_band , col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+plot(x=post_6_band, col=grey(1:255/255), axes = FALSE, box = TRUE, legend = TRUE)
+```
+
+```{r echo=FALSE, warning=FALSE, message = TRUE}
+# lets save the files
+writeRaster(
+  pre_6_band, 
+  filename = "pre_6_band.tif", 
+  filetype = "GTiff",  
+  overwrite = TRUE     
+)
+
+writeRaster(
+  post_6_band, 
+  filename = "post_6_band.tif", 
+  filetype = "GTiff",
+  overwrite = TRUE
+)
+```
+
+### Clipping
+
+Clipping the specific region in order to analyse only the village which has been affected by the glacier.
+
+```{r Clipping Image, warning=FALSE, message=FALSE}
+mask <- vect("AOI//final_extent_shape_file//Final_Entent.shp")
+
+
+pre_crop <- crop(pre_6_band, mask)
+pre_clip <- mask(pre_crop, mask)
+rm(pre_crop)
+
+post_crop <- crop(post_6_band, mask)
+post_clip <- mask(post_crop, mask)
+rm(post_crop)
+
+par(mfrow = c(1, 2),      
+    oma = c(0, 1, 0, 1)) 
+
+plotRGB(pre_clip, axes=FALSE, box = TRUE, frame=TRUE)
+plotRGB(post_clip, axes=FALSE, box = TRUE, frame=TRUE)
+
+```
+```{r echo=FALSE, warning=FALSE, message = TRUE}
+# lets save the files
+writeRaster(
+  pre_clip, 
+  filename = "pre_6_band_clipped.tif", 
+  filetype = "GTiff",  
+  overwrite = TRUE     
+)
+
+writeRaster(
+  post_clip, 
+  filename = "post_6_band_clipped.tif", 
+  filetype = "GTiff",
+  overwrite = TRUE
+)
+```
