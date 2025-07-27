@@ -84,13 +84,22 @@ For the Pre event only the Houses are extracted from among the other classes and
 The output from both the models is being intersected to find out the buildings which are damaged or not, final classes are Damaged by Lake, Damaged by landslide, Not Damaged. The result files can be found [here](3-Results/).
 
 # Automation / Reproduction:
-To automate and/or reproduce the results.
-Create a following folder structure:
-C:/AOHRSI-2025-Project
-C:/AOHRSI-2025-Project/1 - Pre Event
-C:/AOHRSI-2025-Project/2 - Post Event
-C:/AOHRSI-2025-Project/3 - Result
-And paste all teh folders from the folder Sample Folders inside the "1 - Pre Event" and "2 - Post Event" folders. After that put all the inputs in "Step-1 -- Model Inputs" folder, open QGIS and add the inputs as layers and run model in the "QGIS Model Designer". The model will populate all the empty folder. Please made the respective changes in the model for the Post-Event as well.
+
+Next, copy all the folders from the **`Sample Folders`** directory into the following locations:
+
+- Paste them inside `1 - Pre Event`
+- Paste them inside `2 - Post Event`
+
+After that:
+
+1. Put all required inputs into the `Step-1 -- Model Inputs` folder.
+2. Open **QGIS**.
+3. Add the inputs as layers in your project.
+4. Run the model in the **QGIS Model Designer** (Graphical Modeler).
+
+The model will populate all the empty folders with the output data.
+
+> ⚠️ **Note:** Please make the respective changes in the model for the **Post-Event** setup as well.
 
 
 
