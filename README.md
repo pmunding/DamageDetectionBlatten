@@ -10,7 +10,7 @@ The process of detecting the damaged building, can be seen in the [Image](4-Misc
 
 The Process is divided into two parts Pre and Post-event, both have same steps, the only difference is the pre has one extra step "Compactness", as this factor is important for the the detection of houses and roads not the glacier debris or the lake. The Results folder contains the end results.
 
-# Steps:
+# Steps for both the events
 
 ## Step - 0 -- AOI (Area of Interest)
 
@@ -34,7 +34,7 @@ We removed the unnecessary surrounding part of the the main RGB image and also t
 
 ## Step - 3 -- Final input image
 
-After clipping we have stacked all the four images to form a 6 band raster image for both the scenario: [Pre-event](1-Pre-event/Step-3%20--%20Final%20Input%20Image/Pre-Event%206%20Band%20Raster.tif) and [Post-event](2-Post-event/Step-3%20--%20Final%20Input%20Image/Post-Event%206%20Band%20Raster.tif).
+After clipping we have stacked all the four images to form a 6 band raster image for both the scenario: [Pre-event](1-Pre-event/Step-3%20--%20Final%20Input%20Image/) and [Post-event](2-Post-event/Step-3%20--%20Final%20Input%20Image/).
 
 ## Step - 4 -- Segmenetation 
 
@@ -42,13 +42,49 @@ The final stacked image is fed to the segmentation algorithm in QGIS with the pa
 
 ## Step - 5 -- Zonal Statistics
 
+We have calculated the statistics for all the segments. These statistics include min, max, mean, standard deviation, etc..
+
+[Pre](1-Pre-event/Step-5%20--%20Zonal%20Statistics/) <br>
+[Post](2-Post-event/Step-5%20--%20Zonal%20Statistics/)
+
 ## Step - 6 -- Add Compactness
+
+In the post event we haven't applied compactness. Step 6 is only for the pre-event as we need to detect the small size of the roof tops. So, with the zonal statistics we applied also the compactness on the Pre event image
+
+[files](1-Pre-event/Step-6%20--%20Add%20Compactness/)
 
 ## Step - 7 -- Join Labels
 
+Then we joind the simple labels with these zones or segments having statistics already calculated in order to train the data.
+
+[pre event labels](1-Pre-event/Step-1%20--%20Filters/PreEvent%20Labels/) <br>
+[post event labels](2-Post-event/Step-1%20--%20Filters/PostEvent%20Labels/)
+
+These labels are manually picked with 195 labels for Pre-event and 198 for Post-event
+
 ## Step - 8 -- Model Training
+
+The final layers are fed to the SVM for training. Both the models for pre and post events are trained separately.
+
+[Pre - model](1-Pre-event/Step-8%20--%20Model%20Training/)<br>
+[Post - model](2-Post-event/Step-8%20--%20Model%20Training/)
 
 ## Step - 9 -- Classes
 
+The model gives us different classes for both the events.
+
+[pre - event classes](1-Pre-event/Step-9%20--%20Classes/) <br> [post - event classes](2-Post-event/Step-9%20--%20Classes/)
+
 ## Step - 10 -- Specific class
+
+For the Pre event only the Houses are extracted from among the other classes and for the Post event only the Glacier and Lake has been extracted from among the other classes in order to perform the intersection.
+
+# Results:
+
+The output from both the models is being intersected to find out the buildings which are damaged or not, final classes are Damaged by Lake, Damaged by landslide, Not Damaged, Landslide and Lake. The result files can be found [here](3-Results/).
+
+
+
+
+
 
