@@ -87,10 +87,10 @@ The output from both the models is being intersected to find out the buildings w
 
 To automate and/or reproduce the results, create the following folder structure:
 
-C:/AOHRSI-2025-Project
-C:/AOHRSI-2025-Project/1 - Pre Event
-C:/AOHRSI-2025-Project/2 - Post Event
-C:/AOHRSI-2025-Project/3 - Result
+- C:/AOHRSI-2025-Project
+- C:/AOHRSI-2025-Project/1 - Pre Event
+- C:/AOHRSI-2025-Project/2 - Post Event
+- C:/AOHRSI-2025-Project/3 - Result
 
 Next, copy all the folders from the **`Sample Folders`** directory into the following locations:
 
