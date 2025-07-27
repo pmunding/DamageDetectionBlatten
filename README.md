@@ -99,7 +99,7 @@ Next, copy all the folders from the **`Sample Folders`** directory into the foll
 
 After that:
 
-1. Put all required inputs into the `Step-1 -- Model Inputs` folder.
+1. Put all required inputs into the `Step-1 -- Model Inputs` folder inside the `1 - Pre Event` and `2 - Post Event`.
 2. Open **QGIS**.
 3. Add the inputs as layers in your project.
 4. Run the model in the **QGIS Model Designer** (Graphical Modeler).
