@@ -2,12 +2,10 @@
 
 Damage Detection of buildings caused by the Blatten glacier. On 28th of May, the Blatten glacier collapsed and caused a lot of destruction. The debris caused by glacier meltdown destroyed a large part of the village, most of the house were buried under the rumble. 
 
-This repository contains all the work flow of the damage detection analysis in the form of R markdown file, it's corresponding html file, shape files, QGIS trained model, and images output for each steps.
+This repository contains all the work flow of the damage detection analysis in the form of R markdown file, shape files, QGIS trained model, and images.
 
 ## View Analysis
-To view the Initial analysis, open the below html file or open directly the R Markdown file:
-
-[HTML file](Rmd/Swiss_Blatten_glacier_damage_analysis.html)<br>
+R code for the initial analysis: <br>
 [Rmd file](Rmd/Swiss_Blatten_glacier_damage_analysis.Rmd)
 
 
