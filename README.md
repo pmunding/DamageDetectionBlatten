@@ -83,7 +83,14 @@ For the Pre event only the Houses are extracted from among the other classes and
 
 The output from both the models is being intersected to find out the buildings which are damaged or not, final classes are Damaged by Lake, Damaged by landslide, Not Damaged. The result files can be found [here](3-Results/).
 
-# Automation / Reproduction:
+## Automating and Reproducing the Results
+
+To automate and/or reproduce the results, create the following folder structure:
+
+C:/AOHRSI-2025-Project
+C:/AOHRSI-2025-Project/1 - Pre Event
+C:/AOHRSI-2025-Project/2 - Post Event
+C:/AOHRSI-2025-Project/3 - Result
 
 Next, copy all the folders from the **`Sample Folders`** directory into the following locations:
 
